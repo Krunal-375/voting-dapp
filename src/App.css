@@ -1,0 +1,91 @@
+/* filepath: src/App.css */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.candidate {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.candidate h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.candidate p {
+  margin: 0.5rem 0;
+}
+
+.candidate button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.candidate button:hover {
+  background-color: #333;
+}
+
+.form {
+  margin: 2rem 0;
+}
+
+.form input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.form button:hover {
+  background-color: #333;
+}
+/* filepath: src/App.css */
+.message {
+  margin-top: 0.5rem;
+  color: green;
+  font-size: 1rem;
+}
+
+.role-indicator {
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.admin-role {
+  color: #2c3e50;
+  background-color: #f1c40f;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.voter-role {
+  color: #ffffff;
+  background-color: #3498db;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
