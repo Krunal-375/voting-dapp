@@ -34,6 +34,109 @@ function App() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [hasVoted, setHasVoted] = useState<boolean>(false);
 
+  const IntroScreen = () => (
+    <div className="intro-screen">
+      <h1>Welcome to Voting DApp</h1>
+      <p className="intro-description">
+        A secure and transparent blockchain-based voting system
+      </p>
+      
+      <div className="connect-wallet-section">
+        <button className="connect-button" onClick={connectWallet}>
+          Connect with MetaMask
+        </button>
+        {errorMessage && (
+          <p className="error-message">{errorMessage}</p>
+        )}
+      </div>
+
+      <div className="features-section">
+        <h2>Features</h2>
+        <div className="features-grid">
+          <div className="feature-card">
+            <h3>🔐 Secure Voting</h3>
+            <p>MetaMask authentication ensures secure voting process</p>
+          </div>
+          <div className="feature-card">
+            <h3>⚡ Real-time Updates</h3>
+            <p>Instant vote counting and result updates</p>
+          </div>
+          <div className="feature-card">
+            <h3>📊 Transparent</h3>
+            <p>All votes are recorded on the blockchain</p>
+          </div>
+          <div className="feature-card">
+            <h3>✨ User-Friendly</h3>
+            <p>Simple and intuitive voting interface</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const MainScreen = () => {
+    const totalVotes = candidates.reduce((total, candidate) => total + candidate.voteCount, 0);
+
+    return (
+      <div className="main-screen">
+        <div className="header-section">
+          <h1>Voting DApp</h1>
+          <div className="account-info">
+            <p className="address">Connected as: {account}</p>
+            <p className="role-indicator">
+              Role: {isAdmin ? (
+                <span className="admin-role">Admin</span>
+              ) : (
+                <span className="voter-role">
+                  Voter {hasVoted && '(Already Voted)'}
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+
+        {isAdmin && <CandidateForm onAddCandidate={handleAddCandidate} />}
+
+        <div className="stats-section">
+          <div className="stat-card">
+            <h3>Total Candidates</h3>
+            <p>{candidates.length}</p>
+          </div>
+          <div className="stat-card">
+            <h3>Total Votes</h3>
+            <p>{totalVotes}</p>
+          </div>
+        </div>
+
+        <div className="candidates-section">
+          {totalVotes === 0 && (
+            <p className="no-votes-message">No votes have been cast yet.</p>
+          )}
+          
+          {candidates.length === 0 ? (
+            <p className="no-candidates-message">
+              No candidates available. {isAdmin && 'Please add a candidate.'}
+            </p>
+          ) : (
+            <div className="candidates-grid">
+              {candidates.map(candidate => (
+                <Candidate
+                  key={candidate.id}
+                  id={candidate.id}
+                  name={candidate.name}
+                  voteCount={candidate.voteCount}
+                  onVote={handleVote}
+                  canVote={!isAdmin && !hasVoted && !!account}
+                  hasVoted={hasVoted}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const checkVotingStatus = async (address: string) => {
     if (contract) {
       try {
@@ -233,53 +336,20 @@ function App() {
     checkWalletConnection();
   }, []);
 
-  const totalVotes = candidates.reduce((total, candidate) => total + candidate.voteCount, 0);
-
   return (
-    <div>
-      <h1>Voting Dapp</h1>
+    <div className="app-container">
       {loading ? (
-        <p>Loading...</p>
-      ) : account ? (
-        <div>
-          <p>Connected as: {account}</p>
-          <p className="role-indicator">
-            Role: {isAdmin ? (
-              <span className="admin-role">Admin</span>
-            ) : (
-              <span className="voter-role">Voter {hasVoted && '(Already Voted)'}</span>
-            )}
-          </p>
+        <div className="loading-screen">
+          <div className="loader"></div>
+          <p>Loading...</p>
         </div>
+      ) : account ? (
+        <MainScreen />
       ) : (
-        <>
-          <button onClick={connectWallet}>Connect Wallet</button>
-          {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-        </>
-      )}
-
-      {isAdmin && <CandidateForm onAddCandidate={handleAddCandidate} />}
-
-      <h2>Total Candidates: {candidates.length}</h2>
-      <h2>Total Votes: {totalVotes}</h2>
-      {totalVotes === 0 && <p>No votes have been cast yet.</p>}
-      {candidates.length === 0 ? (
-        <p>No candidates available. {isAdmin && 'Please add a candidate.'}</p>
-      ) : (
-        candidates.map(candidate => (
-          <Candidate
-            key={candidate.id}
-            id={candidate.id}
-            name={candidate.name}
-            voteCount={candidate.voteCount}
-            onVote={handleVote}
-            canVote={!isAdmin && !hasVoted && !!account}
-            hasVoted={hasVoted}
-          />
-        ))
+        <IntroScreen />
       )}
     </div>
-  );;
+  );
 }
 
 export default App;

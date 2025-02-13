@@ -1,6 +1,6 @@
 {
-  "votingContractAddress": "0xDA5669e297e1EeeE5c143e6E99555509511116c6",
-  "deployerAccount": "0x61920975A62F277790a2F3A3d12c9E3227a36e96",
+  "votingContractAddress": "0x330A76DD2bB61345DF24127489b4f7AB63978d65",
+  "deployerAccount": "0x19fb0a69e4332aaC30bDBE626bA2F093743c5398",
   "deploymentNetwork": "localhost",
-  "deploymentDate": "2025-02-09T11:46:53.885Z"
+  "deploymentDate": "2025-02-13T02:38:42.040Z"
 }
