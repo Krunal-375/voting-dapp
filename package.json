@@ -2,6 +2,7 @@
   "name": "voting-dapp",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://krunal-375.github.io/voting-dapp",
   "type": "module",
   "scripts": {
     "dev": "vite",
