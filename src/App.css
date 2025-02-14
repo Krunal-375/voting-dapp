@@ -236,4 +236,24 @@
   .stat-card {
     margin-bottom: 1rem;
   }
+  .create-election-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 2rem;
+  }
+  
+  .create-election-button:hover {
+    background-color: #45a049;
+  }
+  
+  .actions-section {
+    margin: 2rem 0;
+    text-align: right;
+  }
 }

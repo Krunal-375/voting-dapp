@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import Candidate from './components/Candidate';
-import CandidateForm from './components/CandidateForm';
+import { Election, Candidate, ElectionFormData } from './types';
 import { getContractConfig } from './utils/contractUtils';
 import './App.css';
+import ElectionForm from './components/ElectionForm';
+import ElectionList from './components/ElectionList';
+import ElectionDetail from './components/ElectionDetail';
 
 // Import the contract ABI
 const VotingABI = [
@@ -11,28 +13,141 @@ const VotingABI = [
   "function getCandidate(uint256 _candidateId) public view returns (uint256 id, string memory name, uint256 voteCount)",
   "function registerCandidate(string memory _name) public",
   "function owner() public view returns (address)",
-  "function vote(uint256 _candidateId) public",
-  "function hasAddressVoted(address _voter) public view returns (bool)",
-  "event VoteCast(address indexed voter, uint256 indexed candidateId)",
+  "function vote(uint256 _electionId, uint256 _candidateId) public", // Updated
+  "function createElection(string memory _name, string[] memory _candidates) public",
+  "function getElections() public view returns (uint256[])",
+  "function getElection(uint256 _electionId) public view returns (uint256 id, string memory name, address createdBy, bool isActive)",
+  "function deleteElection(uint256 _electionId) public",
+  "function deleteCandidate(uint256 _electionId, uint256 _candidateId) public",
+  "function hasAddressVotedInElection(uint256 _electionId, address _voter) public view returns (bool)",
+  "function getElectionCandidate(uint256 _electionId, uint256 _candidateId) public view returns (uint256 id, string memory name, uint256 voteCount)",
+  "function getElectionCandidatesCount(uint256 _electionId) public view returns (uint256)",
+  "event ElectionCreated(uint256 indexed electionId, string name, address createdBy)",
+  "event ElectionDeleted(uint256 indexed electionId)",
+  "event CandidateAdded(uint256 indexed electionId, uint256 indexed candidateId, string name)",
+  "event CandidateDeleted(uint256 indexed electionId, uint256 indexed candidateId)",
+  "event VoteCast(uint256 indexed electionId, address indexed voter, uint256 indexed candidateId)",
   "event VoteError(string message)"
 ];
 
-// Add this interface before the App component
-interface Candidate {
-  id: number;
-  name: string;
-  voteCount: number;
-}
-
 
 function App() {
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [] = useState<Candidate[]>([]);
   const [account, setAccount] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [contract, setContract] = useState<ethers.Contract | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [hasVoted, setHasVoted] = useState<boolean>(false);
+  const [hasVoted] = useState<boolean>(false);
+  const [elections, setElections] = useState<Election[]>([]);
+  const [votedElections, setVotedElections] = useState<{[key: number]: boolean}>({});
+
+  const handleCreateElection = async (data: ElectionFormData) => {
+    if (!contract || !account) {
+      setErrorMessage("Please connect your wallet first");
+      return;
+    }
+  
+    try {
+      setLoading(true);
+      const tx = await contract.createElection(data.name, data.candidates);
+      await tx.wait();
+      
+      // Refresh elections list
+      await refreshElections();
+      setLoading(false);
+    } catch (error: any) {
+      console.error("Error creating election:", error);
+      setErrorMessage(error.reason || error.message || "Failed to create election");
+      setLoading(false);
+    }
+  };
+  
+  const handleDeleteElection = async (electionId: number) => {
+    if (!contract || !account) {
+      setErrorMessage("Please connect your wallet first");
+      return;
+    }
+  
+    try {
+      setLoading(true);
+      const tx = await contract.deleteElection(electionId);
+      await tx.wait();
+      
+      // Refresh elections list
+      await refreshElections();
+      setLoading(false);
+    } catch (error: any) {
+      console.error("Error deleting election:", error);
+      setErrorMessage(error.reason || error.message || "Failed to delete election");
+      setLoading(false);
+    }
+  };
+  
+  const handleDeleteCandidate = async (electionId: number, candidateId: number) => {
+    if (!contract || !account) {
+      setErrorMessage("Please connect your wallet first");
+      return;
+    }
+  
+    try {
+      setLoading(true);
+      const tx = await contract.deleteCandidate(electionId, candidateId);
+      await tx.wait();
+      
+      // Refresh elections list
+      await refreshElections();
+      setLoading(false);
+    } catch (error: any) {
+      console.error("Error deleting candidate:", error);
+      setErrorMessage(error.reason || error.message || "Failed to delete candidate");
+      setLoading(false);
+    }
+  };
+  
+  const refreshElections = async () => {
+    if (!contract) return;
+  
+    try {
+      const electionIds = await contract.getElections();
+      const electionsList: Election[] = [];
+  
+      for (const id of electionIds) {
+        const election = await contract.getElection(id);
+        const candidates: Candidate[] = [];
+        
+        // Get candidates for this election
+        const candidateCount = await contract.getElectionCandidatesCount(id);
+        
+        // Start from index 0 since arrays are zero-based
+        for (let i = 0; i < Number(candidateCount); i++) {
+          try {
+            const candidate = await contract.getElectionCandidate(id, i + 1); // Add 1 to match contract indexing
+            candidates.push({
+              id: i + 1, // Use 1-based indexing for candidates
+              name: candidate.name,
+              voteCount: Number(candidate.voteCount)
+            });
+          } catch (error) {
+            console.error(`Error fetching candidate ${i} for election ${id}:`, error);
+          }
+        }
+  
+        electionsList.push({
+          id: Number(id),
+          name: election.name,
+          createdBy: election.createdBy,
+          candidates: candidates,
+          isActive: election.isActive,
+          totalVotes: candidates.reduce((sum, c) => sum + c.voteCount, 0)
+        });
+      }
+  
+      setElections(electionsList);
+    } catch (error) {
+      console.error("Error refreshing elections:", error);
+    }
+  };
 
   const IntroScreen = () => (
     <div className="intro-screen">
@@ -71,12 +186,20 @@ function App() {
           </div>
         </div>
       </div>
+      <div className="demo-section">
+      <button 
+        className="demo-button"
+        onClick={() => window.location.href = 'http://localhost:5173'} // Local development URL
+      >
+        Try Demo (Local)
+      </button>
+    </div>
     </div>
   );
 
   const MainScreen = () => {
-    const totalVotes = candidates.reduce((total, candidate) => total + candidate.voteCount, 0);
-
+    const [showElectionForm, setShowElectionForm] = useState(false);
+    const [selectedElection, setSelectedElection] = useState<Election | null>(null);
     return (
       <div className="main-screen">
         <div className="header-section">
@@ -94,59 +217,69 @@ function App() {
             </p>
           </div>
         </div>
-
-        {isAdmin && <CandidateForm onAddCandidate={handleAddCandidate} />}
-
-        <div className="stats-section">
-          <div className="stat-card">
-            <h3>Total Candidates</h3>
-            <p>{candidates.length}</p>
+        {showElectionForm ? (
+        <ElectionForm
+          onSubmit={handleCreateElection}
+          onCancel={() => setShowElectionForm(false)}
+        />
+      ) : selectedElection ? (
+        <ElectionDetail
+          election={selectedElection}
+          onVote={handleVote}
+          onDeleteCandidate={handleDeleteCandidate}
+          onBack={() => setSelectedElection(null)}
+          isAdmin={isAdmin}
+          hasVoted={votedElections[selectedElection.id] || false}
+          currentAccount={account || ''}
+        />
+      ) : (
+        <>
+          <div className="actions-section">
+            <button 
+              className="create-election-button"
+              onClick={() => setShowElectionForm(true)}
+            >
+              Create New Election
+            </button>
           </div>
-          <div className="stat-card">
-            <h3>Total Votes</h3>
-            <p>{totalVotes}</p>
-          </div>
-        </div>
 
-        <div className="candidates-section">
-          {totalVotes === 0 && (
-            <p className="no-votes-message">No votes have been cast yet.</p>
-          )}
-          
-          {candidates.length === 0 ? (
-            <p className="no-candidates-message">
-              No candidates available. {isAdmin && 'Please add a candidate.'}
-            </p>
-          ) : (
-            <div className="candidates-grid">
-              {candidates.map(candidate => (
-                <Candidate
-                  key={candidate.id}
-                  id={candidate.id}
-                  name={candidate.name}
-                  voteCount={candidate.voteCount}
-                  onVote={handleVote}
-                  canVote={!isAdmin && !hasVoted && !!account}
-                  hasVoted={hasVoted}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
+          <ElectionList
+      elections={elections}
+      onSelectElection={(id) => {
+        const election = elections.find(e => e.id === id);
+        if (election) setSelectedElection(election);
+      }}
+      onDeleteElection={handleDeleteElection}
+      isAdmin={isAdmin}
+      currentAccount={account || ''}
+      votedElections={votedElections}
+    />
+        </>
+      )}
+    </div>
+  );
+};
 
-  const checkVotingStatus = async (address: string) => {
-    if (contract) {
-      try {
-        const voted = await contract.hasAddressVoted(address);
-        setHasVoted(voted);
-      } catch (error) {
-        console.error("Error checking voting status:", error);
+const checkVotingStatus = async (address: string) => {
+  if (!contract) return;
+  try {
+    const electionIds = await contract.getElections();
+    const votedStatus: {[key: number]: boolean} = {};
+    
+    // Check voting status for each election
+    for (const id of electionIds) {
+      const election = await contract.getElection(id);
+      if (election.isActive) {
+        const hasVoted = await contract.hasAddressVotedInElection(id, address);
+        votedStatus[Number(id)] = hasVoted;
       }
     }
-  };
+    
+    setVotedElections(votedStatus);
+  } catch (error) {
+    console.error("Error checking voting status:", error);
+  }
+};
 
   // Add effect to monitor account changes and check voting status
   useEffect(() => {
@@ -155,63 +288,29 @@ function App() {
     }
   }, [account, contract]);
 
-  const refreshCandidates = async () => {
-    if (contract) {
-      try {
-        const count = await contract.candidatesCount();
-        const candidatesList: Candidate[] = [];
-        for (let i = 1; i <= count; i++) {
-          const candidate = await contract.getCandidate(i);
-          candidatesList.push({
-            id: Number(candidate[0]),
-            name: candidate[1],
-            voteCount: Number(candidate[2])
-          });
-        }
-        setCandidates(candidatesList);
-      } catch (error) {
-        console.error("Error refreshing candidates:", error);
-      }
+
+  const handleVote = async (electionId: number, candidateId: number) => {
+    if (!contract || !account) {
+      setErrorMessage("Please connect your wallet first");
+      return;
     }
-  };
-
-  const handleVote = async (candidateId: number) => {
-      if (!contract || !account) {
-          setErrorMessage("Please connect your wallet first");
-          return;
-      }
-
+  
+    try {
+      setLoading(true);
+      const tx = await contract.vote(electionId, candidateId);
+      console.log("Transaction sent:", tx.hash);
+      await tx.wait();
+      console.log("Vote confirmed");
+      
+      // Update voting status
       await checkVotingStatus(account);
-
-      if (hasVoted) {
-        setErrorMessage("You have already voted");
-        return;
-      }
-
-      try {
-          setLoading(true);
-           const tx = await contract.vote(candidateId);
-           console.log("Transaction sent:", tx.hash);
-           await tx.wait();
-          console.log("Vote confirmed");
-            // Update voting status
-           await checkVotingStatus(account);
-           await refreshCandidates();
-            
-            // Refresh candidate list
-            const updatedCandidate = await contract.getCandidate(candidateId);
-            setCandidates(candidates.map(c => 
-                c.id === candidateId 
-                    ? {...c, voteCount: Number(updatedCandidate[2])} 
-                    : c
-            ));
-            
-            setLoading(false);
-        } catch (error: any) {
-            console.error("Error voting:", error);
-            setErrorMessage(error.reason || error.message || "Failed to vote");
-            setLoading(false);
-        }
+      await refreshElections();
+      setLoading(false);
+    } catch (error: any) {
+      console.error("Error voting:", error);
+      setErrorMessage(error.reason || error.message || "Failed to vote");
+      setLoading(false);
+    }
   };
 
   const initializeContract = async () => {
@@ -223,39 +322,30 @@ function App() {
         
         const currentAccount = await signer.getAddress();
         setIsAdmin(currentAccount.toLowerCase() === contractConfig.deployerAccount.toLowerCase());
-
+  
         console.log("Initializing contract with address:", contractConfig.votingContractAddress);
         const votingContract = new ethers.Contract(
           contractConfig.votingContractAddress,
           VotingABI,
           signer
         );
+        
+        // Verify contract deployment
+        const owner = await votingContract.owner();
+        console.log("Contract owner:", owner);
+        
         setContract(votingContract);
-
-       // Load candidates
-       const count = await votingContract.candidatesCount();
-       console.log("Total candidates:", count.toString());
-       
-       const candidatesList: Candidate[] = [];
-       for (let i = 1; i <= count; i++) {
-         const candidate = await votingContract.getCandidate(i);
-         candidatesList.push({
-           id: Number(candidate[0]),
-           name: candidate[1],
-           voteCount: Number(candidate[2])
-         });
-       }
-       setCandidates(candidatesList);
-       // Check if user has voted
-       if (currentAccount) {
-        await checkVotingStatus(currentAccount);
+        await refreshElections(); // Move this here
+        
+        if (currentAccount) {
+          await checkVotingStatus(currentAccount);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Contract initialization error:", error);
+        setErrorMessage("Failed to initialize contract. Please make sure you're connected to the correct network.");
+        setLoading(false);
       }
-       setLoading(false);
-     } catch (error) {
-       console.error("Contract initialization error:", error);
-       setErrorMessage("Failed to initialize contract");
-       setLoading(false);
-     }
     }
   };
 
@@ -274,49 +364,6 @@ function App() {
       setErrorMessage("MetaMask is not installed. Please install MetaMask.");
     }
   };
-
-  const handleAddCandidate = async (name: string): Promise<boolean> => {
-    if (!contract || !account) {
-      setErrorMessage("Please connect your wallet first");
-      return false;
-    }
-  
-    try {
-      setLoading(true);
-      const contractConfig = await getContractConfig();
-      
-      // Check if connected account is the owner
-      if (account.toLowerCase() !== contractConfig.deployerAccount.toLowerCase()) {
-        setErrorMessage("Only the contract owner can register candidates");
-        setLoading(false);
-        return false;
-      }
-  
-      const tx = await contract.registerCandidate(name);
-      console.log("Transaction sent:", tx.hash);
-      await tx.wait();
-      console.log("Transaction confirmed");
-      
-      // Refresh candidates list
-      const count = await contract.candidatesCount();
-      const candidate = await contract.getCandidate(count);
-      setCandidates([...candidates, {
-        id: Number(candidate[0]),
-        name: candidate[1],
-        voteCount: Number(candidate[2])
-      }]);
-      setLoading(false);
-      return true;
-    } catch (error: any) {
-      console.error("Error adding candidate:", error);
-      setErrorMessage(error.reason || error.message || "Failed to add candidate");
-      setLoading(false);
-      return false;
-    }
-  };
-
-
-
   useEffect(() => {
     const checkWalletConnection = async () => {
       if (window.ethereum) {
@@ -335,6 +382,13 @@ function App() {
 
     checkWalletConnection();
   }, []);
+
+  // Add this effect after the existing effects in App.tsx
+useEffect(() => {
+  if (contract && account) {
+    refreshElections();
+  }
+}, [contract, account]);
 
   return (
     <div className="app-container">

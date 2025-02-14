@@ -1,0 +1,140 @@
+.elections-list {
+    padding: 2rem 0;
+  }
+  
+  .elections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .election-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .election-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .election-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.3rem;
+    color: #2c3e50;
+  }
+  
+  .election-card p {
+    margin: 0.5rem 0;
+    color: #666;
+  }
+  
+  .election-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+  }
+  
+  .view-button {
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .delete-button {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .view-button:hover {
+    background: #1976D2;
+  }
+  
+  .delete-button:hover {
+    background: #ff1744;
+  }
+  
+  .no-elections {
+    text-align: center;
+    color: #666;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+  }
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .election-card {
+      background: #2d2d2d;
+    }
+  
+    .election-card h3 {
+      color: #ecf0f1;
+    }
+  
+    .election-card p {
+      color: #bdc3c7;
+    }
+  
+    .no-elections {
+      color: #bdc3c7;
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .elections-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .election-actions {
+      flex-direction: column;
+    }
+  
+    .view-button,
+    .delete-button {
+      width: 100%;
+    }
+    
+  }
+
+  .voted-indicator {
+    color: #4CAF50;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .voted-indicator::before {
+    content: "✓";
+    font-size: 1.1rem;
+  }
+
+  .creator-info {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.5rem 0;
+  }
+  
+  .creator-info strong {
+    font-weight: 500;
+    color: #2196F3;
+  }

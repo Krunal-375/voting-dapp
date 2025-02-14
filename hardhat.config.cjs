@@ -1,20 +1,15 @@
 require("@nomicfoundation/hardhat-toolbox");
-require("ts-node").register({
-  transpileOnly: true,
-  files: true,
-  compilerOptions: {
-    module: "commonjs",
-    resolveJsonModule: true,
-    esModuleInterop: true
-  }
-});
+require("dotenv").config();
 
-/** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.18",
   networks: {
     hardhat: {
       chainId: 1337
+    },
+    sepolia: {
+      url: process.env.SEPOLIA_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY]
     }
   }
 };

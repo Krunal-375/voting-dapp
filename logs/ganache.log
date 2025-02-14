@@ -3,33 +3,33 @@ Starting RPC server
 
 Available Accounts
 ==================
-(0) 0x19fb0a69e4332aaC30bDBE626bA2F093743c5398 (1000 ETH)
-(1) 0xde517Ff39e850C653387efDA0cB37295b52626a4 (1000 ETH)
-(2) 0xA50801A0Dd0324f42A101804A0F219850CB31490 (1000 ETH)
-(3) 0xd89248D0Cf44da2ce8C5c0dE7c46842617C07C9f (1000 ETH)
-(4) 0x42Ca273B51265b6F8016f23F47D35f12922dc32f (1000 ETH)
-(5) 0x3b022b33996E19d9efb22Fc19ac0b9f9f3A85B20 (1000 ETH)
-(6) 0xC46579d0f4a2e78B92848E6fAC9A3C4765852F52 (1000 ETH)
-(7) 0xF4220328d0ed464f2DC76AEf5BCa59127A2681DD (1000 ETH)
-(8) 0xa73cA71D1C321611C7FA32549FF2586d2C3EA2b4 (1000 ETH)
-(9) 0xeb96caF589e2853C6F9725059f0D86f097793Dac (1000 ETH)
+(0) 0x7e5a172BaEb563e15010116f08E72fd7ddC26717 (1000 ETH)
+(1) 0x9ED938B862EdABEe758a2CAC431c2D0f51420eAb (1000 ETH)
+(2) 0xdCb49D4047838f412E55066B6a83d3b2F2b4f1b0 (1000 ETH)
+(3) 0x28864B8434D976944DC2D82e58Ef0531B3a0b149 (1000 ETH)
+(4) 0xD85eFF0C3c2354c36b1490C992F5b2949d37211d (1000 ETH)
+(5) 0x934A192D15824fd30AeFCB3711ee7B0144091BAD (1000 ETH)
+(6) 0x5DE2479ce695Bf22aF39484B37177bCFE64F66C8 (1000 ETH)
+(7) 0x77403E5159C165e2Dc5357963782d450997A94C7 (1000 ETH)
+(8) 0x64c4A550E662bff2f465F991deB8a1B1D876A99f (1000 ETH)
+(9) 0x888240C79ccC512450f6d529169E6b35aA0bfDBE (1000 ETH)
 
 Private Keys
 ==================
-(0) 0x4e57ca73ce9ad966292b6b055efdba50a0c2321bf4cc8a4c1f60c7c9aed93e35
-(1) 0x838e9035ee6ca431a790ac51f24666e56ba13421f136cfcef4a5e65aa2d8b70a
-(2) 0xeda704c3ab0eb511ee5ab560f7f049808508001c7ebdc77605357de3dcf53a82
-(3) 0x1a368ae2526d43ca4188f06ec59ee00d7ec0730339ec35877db04575af073aa0
-(4) 0xb50431c3829bc6cd242ba25b5eae3403e169023969886036d00d607119e2f3e9
-(5) 0xabaf5ba1d49b4758d1d951c025932806e3e07b2cb9af536e2131ab7d0a6b6a69
-(6) 0x11c5f4bad974bb36d7bd01a341afb89d4e3e0b2e712fd90da6cabc4eefe54b33
-(7) 0x41f67fc8692a3799ef90fe372d812bb78d99456d5e1d5a80fa22e3d351c8a074
-(8) 0xa85e97f2d6611470db62a2e3760a52b30f05ea6cdba19d14cfb27b21a897af53
-(9) 0x9957b7c4f7ec87dc60c25091a0acb12f4589a2f4554834429812860879deb6c9
+(0) 0x8ec73363ace6028fa179745b8d10d63fe7ba9b7865a1df7652b3cf1a16164a41
+(1) 0x10aacda763d635eedcd7bddccc9c12dbbc6f5e5f82692b1abf21515bc8c7837b
+(2) 0x40f0763e993bbd7f1d1749475d0359c101ecd4411b2903f59bb0d825058469c2
+(3) 0x5c49c48b5d8a0a3af77e0a8c927e814a897ee8840dbfd1aaca7af3f0cbf3131c
+(4) 0x1dea76d95325fae4405daf7d51bba881ea53439c3b7eb28477aa259b3a73e332
+(5) 0xe993b6e57d90350351c06a181ee257e6e08f69f44d9fbea2be1bf4fcd3038e1b
+(6) 0x2c71e3d3e01fd95d83068c98525b16eff175f15e504bc3113bad946e194248ab
+(7) 0x7021d4814da3e37c9c0225656e57064729fad7f6a2423c3fb628d21111bd1e22
+(8) 0x8948c8c2572e272d90400b3a36536c8159c78343b63633877a4d8728d97233a1
+(9) 0xc7ea24dc0cb0f18b6113d3fe6ffc7d3ddbdfedca167242f09cb16e44745dcaeb
 
 HD Wallet
 ==================
-Mnemonic:      visa latin good away among dragon luggage dance vault style loop action
+Mnemonic:      fiber meadow blame embody magic fish dance run shove common venture shop
 Base HD Path:  m/44'/60'/0'/0/{account_index}
 
 Default Gas Price
@@ -50,57 +50,12 @@ Hardfork: shanghai
 Id:       1337
 
 RPC Listening on 127.0.0.1:8545
-eth_accounts
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-eth_accounts
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-hardhat_metadata
-eth_blockNumber
-eth_estimateGas
-eth_getBlockByNumber
-eth_feeHistory
-eth_maxPriorityFeePerGas
-eth_sendTransaction
-
-  Transaction: 0x213da5c00d3f6168773216dd254a63ac0ce8d926b4479896f2216354e5680f28
-  Contract created: 0x330a76dd2bb61345df24127489b4f7ab63978d65
-  Gas usage: 1109794
-  Block number: 1
-  Block time: Thu Feb 13 2025 08:08:42 GMT+0530 (India Standard Time)
-
-eth_getTransactionByHash
-eth_getTransactionReceipt
-eth_blockNumber
-eth_blockNumber
-eth_call
-eth_call
-eth_blockNumber
-eth_blockNumber
-eth_blockNumber
-eth_blockNumber
 eth_blockNumber
 eth_getBalance
-eth_blockNumber
-eth_blockNumber
-eth_call
-eth_call
+eth_getBalance
+eth_getBalance
+eth_getBlockByNumber
+eth_gasPrice
 
 Received shutdown signal: SIGINT
 Shutting down…
