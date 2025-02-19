@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/krunaldhapodkar/Documents/OpenSource/voting-dapp/contracts/Voting.sol": {
-      "lastModificationDate": 1739540930702,
+      "lastModificationDate": 1739967205642,
       "contentHash": "c22a8a807cd4157bc5600d332c3a3995",
       "sourceName": "contracts/Voting.sol",
       "solcConfig": {

@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/voting-dapp/',  // Add this line - should match your repository name
+  base: '/voting-dapp/',
   plugins: [react()],
   server: {
     host: '0.0.0.0',
